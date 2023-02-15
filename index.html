@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Well Integrity Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Well Integrity Calculator</h1>
+  <form id="well-integrity-form">
+    <label for="diameter-input">Diameter (in):</label>
+    <input type="number" id="diameter-input" step="0.01" required>
+    <br>
+    <label for="depth-input">Depth (ft):</label>
+    <input type="number" id="depth-input" step="0.01" required>
+    <br>
+    <label for="pressure-input">Pressure (psi):</label>
+    <input type="number" id="pressure-input" step="0.01" required>
+    <br>
+    <label for="temperature-input">Temperature (F):</label>
+    <input type="number" id="temperature-input" step="0.01" required>
+    <br>
+    <label for="strength-input">Strength (psi):</label>
+    <input type="number" id="strength-input" step="0.01" required>
+    <br>
+    <button type="submit">Calculate</button>
+  </form>
+  <br>
+  <h2>Well Integrity: <span id="well-integrity-output"></span>%</h2>
+  <canvas id="well-integrity-chart" width="400" height="400"></canvas>
+  <script>
+    // Put the JavaScript code here
+  // Get references to the form, input fields, and chart element
+const wellIntegrityForm = document.getElementById('well-integrity-form');
+const diameterInput = document.getElementById('diameter-input');
+const depthInput = document.getElementById('depth-input');
+const pressureInput = document.getElementById('pressure-input');
+const temperatureInput = document.getElementById('temperature-input');
+const strengthInput = document.getElementById('strength-input');
+const wellIntegrityChart = document.getElementById('well-integrity-chart').getContext('2d');
+
+// Define a function to calculate the well integrity
+function calculateWellIntegrity() {
+  // Get the input values from the form
+  const diameter = parseFloat(diameterInput.value);
+  const depth = parseFloat(depthInput.value);
+  const pressure = parseFloat(pressureInput.value);
+  const temperature = parseFloat(temperatureInput.value);
+  const strength = parseFloat(strengthInput.value);
+
+  // Calculate the hoop stress
+  const hoopStress = (2 * pressure * diameter) / (2 * strength - diameter);
+
+  // Calculate the well integrity
+  const wellIntegrity = (hoopStress / (0.87 * strength)) * (depth / diameter) * (0.78 + 0.22 * Math.exp(-0.15 * temperature));
+
+  // Display the well integrity in the output element
+  document.getElementById('well-integrity-output').innerText = wellIntegrity.toFixed(2);
+
+  // Update the chart data and display the chart
+  updateChart(wellIntegrity);
+}
+
+// Define a function to update the chart data and display the chart
+function updateChart(wellIntegrity) {
+  // Get the existing chart data and update it with the new well integrity value
+  const chartData = wellIntegrityChart.data.datasets[0].data;
+  chartData.push(wellIntegrity);
+
+  // Redraw the chart with the updated data
+  wellIntegrityChart.update();
+}
+
+// Define the initial chart configuration
+const chartConfig = {
+  type: 'line',
+  data: {
+    datasets: [{
+      label: 'Well Integrity',
+      data: [],
+      fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Well Integrity Chart'
+      }
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Measurement'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Well Integrity'
+        },
+        suggestedMin: 0,
+        suggestedMax: 100
+      }
+    }
+  }
+};
+
+// Create the chart with the initial configuration
+const wellIntegrityLineChart = new Chart(wellIntegrityChart, chartConfig);
+
+// Add an event listener to the form submit button to trigger the calculation
+wellIntegrityForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  calculateWellIntegrity();
+});
+</script>
+</body>
+</html>
