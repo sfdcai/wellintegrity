@@ -26,148 +26,28 @@
       padding: 5px;
       margin: 0 10px;
       border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      width: 200px;
-      max-width: 100%;
-      box-sizing: border-box;
     }
 
-    button[type="submit"] {
-      margin-top: 10px;
-      padding: 5px;
-      border-radius: 5px;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #3e8e41;
-    }
-
-    canvas {
-      max-width: 100%;
-      display: block;
-      margin: 20px auto;
+    #container {
+      width: 80%;
+      height: 400px;
+      margin: 50px auto;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body>
   <h1>Well Integrity Calculator</h1>
-  <form id="well-integrity-form">
-    <label for="diameter-input">Diameter (in):</label>
-    <input type="number" id="diameter-input" step="0.01" required>
-    <label for="depth-input">Depth (ft):</label>
-    <input type="number" id="depth-input" step="0.01" required>
-    <label for="pressure-input">Pressure (psi):</label>
-    <input type="number" id="pressure-input" step="0.01" required>
-    <label for="temperature-input">Temperature (F):</label>
-    <input type="number" id="temperature-input" step="0.01" required>
-    <label for="strength-input">Strength (psi):</label>
-    <input type="number" id="strength-input" step="0.01" required>
-    <button type="submit">Calculate</button>
+  <form id="integrityForm">
+    <label for="barrierType">Barrier Type:</label>
+    <input type="text" id="barrierType" name="barrierType" required>
+    
+    <label for="status">Status:</label>
+    <input type="text" id="status" name="status" required>
+    
+    <button type="submit">Submit</button>
   </form>
-  <h2 style="text-align: center;">Well Integrity: <span id="well-integrity-output"></span>%</h2>
-  <canvas id="well-integrity-chart" width="400" height="400"></canvas>
-  <script>
-    // Put the JavaScript code here
-  
-    // Put the JavaScript code here
-  // Get references to the form, input fields, and chart element
-const wellIntegrityForm = document.getElementById('well-integrity-form');
-const diameterInput = document.getElementById('diameter-input');
-const depthInput = document.getElementById('depth-input');
-const pressureInput = document.getElementById('pressure-input');
-const temperatureInput = document.getElementById('temperature-input');
-const strengthInput = document.getElementById('strength-input');
-const wellIntegrityChart = document.getElementById('well-integrity-chart').getContext('2d');
-
-// Define a function to calculate the well integrity
-function calculateWellIntegrity() {
-  // Get the input values from the form
-  const diameter = parseFloat(diameterInput.value);
-  const depth = parseFloat(depthInput.value);
-  const pressure = parseFloat(pressureInput.value);
-  const temperature = parseFloat(temperatureInput.value);
-  const strength = parseFloat(strengthInput.value);
-
-  // Calculate the hoop stress
-  const hoopStress = (2 * pressure * diameter) / (2 * strength - diameter);
-
-  // Calculate the well integrity
-  const wellIntegrity = (hoopStress / (0.87 * strength)) * (depth / diameter) * (0.78 + 0.22 * Math.exp(-0.15 * temperature));
-
-  // Display the well integrity in the output element
-  document.getElementById('well-integrity-output').innerText = wellIntegrity.toFixed(2);
-
-  // Update the chart data and display the chart
-  updateChart(wellIntegrity);
-}
-
-// Define a function to update the chart data and display the chart
-function updateChart(wellIntegrity) {
-  // Get the existing chart data and update it with the new well integrity value
-  const chartData = wellIntegrityChart.data.datasets[0].data;
-  chartData.push(wellIntegrity);
-
-  // Redraw the chart with the updated data
-  wellIntegrityChart.update();
-}
-
-// Define the initial chart configuration
-const chartConfig = {
-  type: 'line',
-  data: {
-    datasets: [{
-      label: 'Well Integrity',
-      data: [],
-      fill: false,
-      borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Well Integrity Chart'
-      }
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Measurement'
-        }
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Well Integrity'
-        },
-        suggestedMin: 0,
-        suggestedMax: 100
-      }
-    }
-  }
-};
-
-// Create the chart with the initial configuration
-const wellIntegrityLineChart = new Chart(wellIntegrityChart, chartConfig);
-
-// Add an event listener to the form submit button to trigger the calculation
-wellIntegrityForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  calculateWellIntegrity();
-});
-</script>
+  <div id="container"></div>
+  <script src="script.js"></script>
 </body>
 </html>
