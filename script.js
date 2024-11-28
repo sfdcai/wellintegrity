@@ -2,7 +2,7 @@ document.getElementById('integrityForm').addEventListener('submit', function(eve
     event.preventDefault();
     
     const barrierType = document.getElementById('barrierType').value;
-    const status = document.getElementById('status').value;
+    const status = parseFloat(document.getElementById('status').value);
     
     Highcharts.chart('container', {
         chart: {
@@ -12,17 +12,24 @@ document.getElementById('integrityForm').addEventListener('submit', function(eve
             text: 'Well Barrier Integrity'
         },
         xAxis: {
-            categories: ['Barrier Type']
+            categories: ['Surface', 'Intermediate', 'Production', 'Reservoir']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Status'
+                text: 'Integrity Status'
             }
         },
         series: [{
             name: barrierType,
-            data: [parseFloat(status)]
-        }]
+            data: [status, status, status, status]
+        }],
+        plotOptions: {
+            column: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        }
     });
 });
